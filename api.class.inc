@@ -32,7 +32,6 @@ class Emfl_Platform_API {
    */
   function __construct( $api_key, $error_function = NULL ) {
     $this->apikey = $api_key;
-    $this->http_request_function = $http_request_function;
     $this->error_function = $error_function;
   }
   
@@ -131,13 +130,24 @@ class Emfl_Platform_API {
     $response = new Emfl_Response($response);
     
     // Look for API fail
-    if($response->status != 1) {
+    if($response->success != 1) {
       $this->err( 'Bad API call: ' . $response->code . ' - ' . var_export($response->errors, TRUE) );
     }
     
     return $response;
   }
 
+  /**
+   * Test method, use it to see whether API key, 
+   * error_function and request handlers are working.
+   * 
+   * @see http://apidocs.emailer.emfluence.com/#responses
+   * @return boolean | Emfl_Response
+   */
+  function ping() {
+    return $this->call( 'helper/ping', array() );
+  }
+  
   /**
    * Save a contact and get the saved contact in return.
    * 
