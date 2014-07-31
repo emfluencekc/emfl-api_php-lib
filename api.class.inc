@@ -102,6 +102,8 @@ class Emfl_Platform_API {
       curl_setopt($curl, CURLOPT_HEADER, false);
       curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);
       curl_setopt($curl, CURLOPT_HTTPHEADER, array("Content-type: application/json"));
+      curl_setopt($curl, CURLOPT_CONNECTTIMEOUT, 2);
+      curl_setopt($curl, CURLOPT_TIMEOUT, $this->timeout);
       curl_setopt($curl, CURLOPT_POST, true);
       curl_setopt($curl, CURLOPT_POSTFIELDS, json_encode( (object) $params ) );
       $json_response = curl_exec($curl);
