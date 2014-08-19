@@ -2,14 +2,15 @@
 
 /**
  * Determine whether an API response is an error.
+ * If this function returns TRUE, you have an error!
  * @param bool | Emfl_Response $response
  * @return bool
  */
 function emfl_response_is_error( $response ) {
-  if(empty( $response )) return FALSE;
-  if( get_class( $response ) != 'Emfl_Response' ) return FALSE;
-  if( $response->success == 0 ) return FALSE;
-  return TRUE;
+  if(empty( $response )) return TRUE;
+  if( get_class( $response ) != 'Emfl_Response' ) return TRUE;
+  if( $response->success == 0 ) return TRUE;
+  return FALSE;
 }
 
 /**
