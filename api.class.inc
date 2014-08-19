@@ -178,4 +178,33 @@ class Emfl_Platform_API {
     return $response;
   }
 
+  /**
+   * Import / save multiple contacts
+   * 
+   * The return value could be FALSE if a transmission error occurred,
+   * like being blocked by the Platform or a network issue.
+   *
+   * Otherwise even bad API calls will get an Emfl_Response object
+   * that corresponds with the Platform's response format. See here:
+   * http://apidocs.emailer.emfluence.com/#responses
+   *
+   * Don't forget to check the 'success' property before assuming that
+   * the operation occurred correctly. If an error occurred, the 'data'
+   * property will be FALSE and the 'errors' property will have details.
+   *
+   * Finally, if the operation was successful, the 'data' property is a
+   * populated Emfl_Contacts_Import object with summary details.
+   *
+   * @param array $params Per the API reference.
+   * @return bool | Emfl_Response
+   * @see http://apidocs.emailer.emfluence.com/endpoints/contacts/import
+   */
+  function contacts_import( $params ) {
+    $response = $this->call('contacts/import', $params);
+    if(empty($response)) return FALSE; // Transmission error
+    require_once 'response_objects/contacts.import.class.inc';
+    if(!empty( $response->data )) $response->data = new Emfl_Contacts_Import($response->data);
+    return $response;
+  }
+  
 }
