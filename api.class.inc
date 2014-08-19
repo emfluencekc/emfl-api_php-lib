@@ -28,7 +28,8 @@ class Emfl_Platform_API {
 
   /**
    * @param string $api_key
-   * @param string $http_request_function Function name. The function gets passed the URL
+   * @param string $error_function Function name. 
+   * The function gets passed any error message as a string parameter.
    */
   function __construct( $api_key, $error_function = NULL ) {
     $this->apikey = $api_key;
