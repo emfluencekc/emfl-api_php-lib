@@ -24,6 +24,14 @@ class Emfl_Platform_API {
   var $apikey;
   var $url = 'https://api.emailer.emfluence.com/v0';
   var $timeout = 15; // Low so that if the Platform API is slow, it doesn't cause this script to time out.
+  
+  /**
+   * The function or method to call when an error occurs.
+   * You can either pass the string function name or 
+   * an array containing the object and method name to be called:
+   * for example, array($obj, $methodname)
+   * @var string | array
+   */
   var $error_function;
 
   /**
@@ -37,12 +45,19 @@ class Emfl_Platform_API {
   }
 
   /**
-   * Use the error function passed in the constructor.
+   * Use the error function or method passed in the constructor.
    * @param string $msg
    */
   private function err( $msg ) {
     $func = $this->error_function;
-    if( !empty($func) && is_callable($func) ) $func( $msg );
+    if( empty($func) || !is_callable($func) ) return; 
+    if( is_string($func) ) {
+      $func( $msg );
+    } elseif( is_array( $func ) ) {
+      $obj = $func[0];
+      $method = $func[1];
+      $obj->$method($msg);
+    }
   }
 
   /**
