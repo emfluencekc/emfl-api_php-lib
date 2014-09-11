@@ -95,7 +95,7 @@ class Emfl_Platform_API {
               'headers' => array( 'Content-Type' => 'application/json' ),
               'method' => 'POST',
               'data' => json_encode( (object) $params),
-              'timeout' => 15
+              'timeout' => $this->timeout
                 )
         );
       } else {
@@ -105,7 +105,7 @@ class Emfl_Platform_API {
             'POST',
             json_encode( (object) $params),
             1,
-            15
+            $this->timeout
         );
       }
 
