@@ -86,16 +86,28 @@ class Emfl_Platform_API {
     $url = $this->url . '/' . $endpoint;
     $params['apiKey'] = $this->apikey;
 
-    if( function_exists('drupal_http_request') ) {
+    if( function_exists('drupal_http_request') && defined('VERSION') ) {
       // Drupal request handler
-      $response = drupal_http_request(
-          $url,
-          array( 'Content-Type' => 'application/json' ),
-          'POST',
-          json_encode( (object) $params),
-          1,
-          15
-      );
+      if( VERSION > 7 ) {
+        $response = drupal_http_request(
+            $url,
+            array(
+              'headers' => array( 'Content-Type' => 'application/json' ),
+              'method' => 'POST',
+              'data' => json_encode( (object) $params),
+              'timeout' => 15
+                )
+        );
+      } else {
+        $response = drupal_http_request(
+            $url,
+            array( 'Content-Type' => 'application/json' ),
+            'POST',
+            json_encode( (object) $params),
+            1,
+            15
+        );
+      }
 
     } elseif( function_exists('wp_remote_post') && false ) {
       // Wordpress request handler
