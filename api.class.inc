@@ -197,7 +197,7 @@ class Emfl_Platform_API {
    *
    * @param array $params Per the API reference.
    * @return bool | Emfl_Response
-   * @see http://apidocs.emailer.emfluence.com/endpoints/contacts/save
+   * @see https://apidocs.emailer.emfluence.com/endpoints/contacts/save
    */
   function contacts_save( $params ) {
     $response = $this->call('contacts/save', $params);
@@ -226,13 +226,42 @@ class Emfl_Platform_API {
    *
    * @param array $params Per the API reference.
    * @return bool | Emfl_Response
-   * @see http://apidocs.emailer.emfluence.com/endpoints/contacts/import
+   * @see https://apidocs.emailer.emfluence.com/endpoints/contacts/import
    */
   function contacts_import( $params ) {
     $response = $this->call('contacts/import', $params);
     if(empty($response)) return FALSE; // Transmission error
     require_once 'response_objects/contacts.import.class.inc';
     if(!empty( $response->data )) $response->data = new Emfl_Contacts_Import($response->data);
+    return $response;
+  }
+  
+  /**
+   * Emails / lookup
+   * 
+   * The return value could be FALSE if a transmission error occurred,
+   * like being blocked by the Platform or a network issue.
+   *
+   * Otherwise even bad API calls will get an Emfl_Response object
+   * that corresponds with the Platform's response format. See here:
+   * http://apidocs.emailer.emfluence.com/#responses
+   *
+   * Don't forget to check the 'success' property before assuming that
+   * the operation occurred correctly. If an error occurred, the 'data'
+   * property will be FALSE and the 'errors' property will have details.
+   *
+   * Finally, if the operation was successful, the 'data' property is a
+   * populated Emfl_Email object with email details.
+   * 
+   * @param int $email_id The email ID
+   * @return boolean| Emfl_Response
+   * @see https://apidocs.emailer.emfluence.com/endpoints/emails/lookup
+   */
+  function emails_lookup( $email_id ) {
+    $response = $this->call('emails/lookup', array('emailID' => $email_id));
+    if(empty($response)) return FALSE; // Transmission error
+    require_once 'response_objects/contacts.import.class.inc';
+    if(!empty( $response->data )) $response->data = new Emfl_Email($response->data);
     return $response;
   }
   
