@@ -1,17 +1,13 @@
 <?php 
 
-class Emfl_Contacts_Import {
+require_once 'generic.class.inc';
 
-  var $recordsUpdated, $recordsInserted, $recordsInData;
+class Emfl_Contacts_Import extends Emfl_Response_Generic {
+
+  var $recordsUpdated;
   
-  /**
-   * @param array | stdClass $data Containing the properties to set
-   */
-  function __construct( $data ) {
-    $data = (array) $data;
-    foreach( $data as $key=>$val ) {
-      $this->$key = $val;
-    }
-  }
+  var $recordsInserted;
+  
+  var $recordsInData;
 
 }

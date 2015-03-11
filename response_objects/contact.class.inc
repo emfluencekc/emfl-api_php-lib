@@ -1,68 +1,65 @@
 <?php 
 
-class Emfl_Contact {
+require_once 'generic.class.inc';
 
-  var $address1,
-  $address2,
-  $city,
-  $company,
-  $contactID,
-  $content1,
-  $content2,
-  $content3,
-  $country,
-  $custom1,
-  $custom10,
-  $custom11,
-  $custom12,
-  $custom13,
-  $custom14,
-  $custom15,
-  $custom16,
-  $custom17,
-  $custom18,
-  $custom19,
-  $custom2,
-  $custom20,
-  $custom3,
-  $custom4,
-  $custom5,
-  $custom6,
-  $custom7,
-  $custom8,
-  $custom9,
-  $customerID,
-  $dateAdded,
-  $dateHeld,
-  $dateModified,
-  $dateOfBirth,
-  $dateSuppressed,
-  $email,
-  $fax,
-  $firstName,
-  $groupIDs,
-  $held,
-  $ipAddress,
-  $lastName,
-  $memo,
-  $notes,
-  $originalSource,
-  $phone,
-  $purl,
-  $state,
-  $suppressed,
-  $title,
-  $userID,
-  $zipCode;
+class Emfl_Contact extends Emfl_Response_Generic {
+
+  var $contactID;
+  var $customerID; 
+  var $userID;
+
+  var $title;
+  var $company;
+  var $email; 
+  var $phone;
+  var $fax; 
+  var $firstName; 
+  var $lastName;
+  var $dateOfBirth; 
   
-  /**
-   * @param array | stdClass $data Containing the properties to set
-   */
-  function __construct( $data ) {
-    $data = (array) $data;
-    foreach( $data as $key=>$val ) {
-      $this->$key = $val;
-    }
-  }
-
+  var $address1; 
+  var $address2; 
+  var $city; 
+  var $state; 
+  var $zipCode;
+  var $country; 
+  
+  var $content1;
+  var $content2;
+  var $content3; 
+  
+  var $custom1; 
+  var $custom2; 
+  var $custom3; 
+  var $custom4; 
+  var $custom5; 
+  var $custom6; 
+  var $custom7; 
+  var $custom8;
+  var $custom9; 
+  var $custom10; 
+  var $custom11; 
+  var $custom12; 
+  var $custom13; 
+  var $custom14; 
+  var $custom15; 
+  var $custom16; 
+  var $custom17; 
+  var $custom18; 
+  var $custom19; 
+  var $custom20; 
+  
+  var $dateAdded; 
+  var $dateHeld; 
+  var $dateModified; 
+  var $dateSuppressed; 
+  var $groupIDs; 
+  var $held; 
+  var $ipAddress;
+  var $memo; 
+  var $notes; 
+  var $originalSource; 
+  var $purl; 
+  var $suppressed; 
+  
 }
