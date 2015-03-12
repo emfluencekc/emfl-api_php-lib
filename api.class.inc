@@ -282,14 +282,14 @@ class Emfl_Platform_API {
    * Finally, if the operation was successful, the 'data' property is a
    * populated Emfl_Email object with email details.
    * 
-   * @param Emfl_Email $email
+   * @param Emfl_Email $email It's probably best to use a response object from an emails_lookup call as the input here.
    * @return Emfl_Email
    * @see https://apidocs.emailer.emfluence.com/endpoints/emails/save
    */
   function emails_save( Emfl_Email $email ) {
     $response = $this->call('emails/save', (array) $email );
     if(empty($response)) return FALSE; // Transmission error
-    require_once 'response_objects/contacts.import.class.inc';
+    require_once 'response_objects/email.class.inc';
     if(!empty( $response->data )) $response->data = new Emfl_Email($response->data);
     return $response;
   }
