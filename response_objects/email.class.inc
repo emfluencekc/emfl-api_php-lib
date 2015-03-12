@@ -10,7 +10,7 @@ class Emfl_Email extends Emfl_Response_Generic {
   
   var $content;
   
-  var $dataAdded;
+  var $dateAdded;
   
   var $dateModified;
   
