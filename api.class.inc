@@ -167,6 +167,11 @@ class Emfl_Platform_API {
     return $response;
   }
 
+  
+  //////////
+  // Test //
+  //////////
+  
   /**
    * Test method, use it to see whether API key,
    * error_function and request handlers are working.
@@ -178,6 +183,11 @@ class Emfl_Platform_API {
     return $this->call( 'helper/ping', array() );
   }
 
+  
+  //////////////
+  // Contacts //
+  //////////////
+  
   /**
    * Save a contact and get the saved contact in return.
    *
@@ -233,6 +243,48 @@ class Emfl_Platform_API {
     if(empty($response)) return FALSE; // Transmission error
     require_once 'response_objects/contacts.import.class.inc';
     if(!empty( $response->data )) $response->data = new Emfl_Contacts_Import($response->data);
+    return $response;
+  }
+  
+  
+  ////////////
+  // Emails //
+  ////////////
+  
+  /**
+   * Emails / search
+   *
+   * The return value could be FALSE if a transmission error occurred,
+   * like being blocked by the Platform or a network issue.
+   *
+   * Otherwise even bad API calls will get an Emfl_Response object
+   * that corresponds with the Platform's response format. See here:
+   * http://apidocs.emailer.emfluence.com/#responses
+   *
+   * Don't forget to check the 'success' property before assuming that
+   * the operation occurred correctly. If an error occurred, the 'data'
+   * property will be FALSE and the 'errors' property will have details.
+   *
+   * Finally, if the operation was successful, the 'data' property is an
+   * array of populated Emfl_Email objects with email details. Note however
+   * that the populated objects are not complete email objects, as per the 
+   * API documentation.
+   *
+   * @param array $params Keyed values, per API documentation
+   * @return Emfl_Response
+   * @see https://apidocs.emailer.emfluence.com/endpoints/emails/copy
+   */
+  function emails_search( $params ) {
+    $response = $this->call('emails/search', $params);
+    if(empty($response)) return FALSE; // Transmission error
+    if(!empty($response->data) && !empty($response->data->records)) {
+      require_once 'response_objects/email.class.inc';
+      $emails = array();
+      foreach( $response->data->records as $el ) {
+        $emails[] = new Emfl_Email($el);
+      }
+      $response->data = $emails;
+    }
     return $response;
   }
   
