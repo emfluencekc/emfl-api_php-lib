@@ -265,10 +265,10 @@ class Emfl_Platform_API {
    * the operation occurred correctly. If an error occurred, the 'data'
    * property will be FALSE and the 'errors' property will have details.
    *
-   * Finally, if the operation was successful, the 'data' property is an
-   * array of populated Emfl_Email objects with email details. Note however
-   * that the populated objects are not complete email objects, as per the 
-   * API documentation.
+   * Finally, if the operation was successful, the 'data' property is a
+   * populated Emfl_Email_Search object with paging details and a records 
+   * list of emails. Note however that the populated email objects are not 
+   * complete email objects, as per the API documentation.
    *
    * @param array $params Keyed values, per API documentation
    * @return Emfl_Response
@@ -277,13 +277,9 @@ class Emfl_Platform_API {
   function emails_search( $params ) {
     $response = $this->call('emails/search', $params);
     if(empty($response)) return FALSE; // Transmission error
-    if(!empty($response->data) && !empty($response->data->records)) {
-      require_once 'response_objects/email.class.inc';
-      $emails = array();
-      foreach( $response->data->records as $el ) {
-        $emails[] = new Emfl_Email($el);
-      }
-      $response->data = $emails;
+    if(!empty($response->data)) {
+      require_once 'response_objects/emails.search.class.inc';
+      $response->data = new Emfl_Emails_Search($response->data->paging, $response->data->records);
     }
     return $response;
   }
