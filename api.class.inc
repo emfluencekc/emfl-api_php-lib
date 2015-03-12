@@ -260,6 +260,35 @@ class Emfl_Platform_API {
   function emails_lookup( $email_id ) {
     $response = $this->call('emails/lookup', array('emailID' => $email_id));
     if(empty($response)) return FALSE; // Transmission error
+    require_once 'response_objects/email.class.inc';
+    if(!empty( $response->data )) $response->data = new Emfl_Email($response->data);
+    return $response;
+  }
+  
+  /**
+   * Emails / save
+   * 
+   * The return value could be FALSE if a transmission error occurred,
+   * like being blocked by the Platform or a network issue.
+   *
+   * Otherwise even bad API calls will get an Emfl_Response object
+   * that corresponds with the Platform's response format. See here:
+   * http://apidocs.emailer.emfluence.com/#responses
+   *
+   * Don't forget to check the 'success' property before assuming that
+   * the operation occurred correctly. If an error occurred, the 'data'
+   * property will be FALSE and the 'errors' property will have details.
+   *
+   * Finally, if the operation was successful, the 'data' property is a
+   * populated Emfl_Email object with email details.
+   * 
+   * @param Emfl_Email $email
+   * @return Emfl_Email
+   * @see https://apidocs.emailer.emfluence.com/endpoints/emails/save
+   */
+  function emails_save( Emfl_Email $email ) {
+    $response = $this->call('emails/save', (array) $email );
+    if(empty($response)) return FALSE; // Transmission error
     require_once 'response_objects/contacts.import.class.inc';
     if(!empty( $response->data )) $response->data = new Emfl_Email($response->data);
     return $response;
