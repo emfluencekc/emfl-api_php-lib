@@ -401,4 +401,32 @@ class Emfl_Platform_API {
     return $response;
   }
   
+  /**
+   * Emails / sendTest
+   *
+   * The return value could be FALSE if a transmission error occurred,
+   * like being blocked by the Platform or a network issue.
+   *
+   * Otherwise even bad API calls will get an Emfl_Response object
+   * that corresponds with the Platform's response format. See here:
+   * http://apidocs.emailer.emfluence.com/#responses
+   *
+   * Don't forget to check the 'success' property before assuming that
+   * the operation occurred correctly. If an error occurred, the 'errors' 
+   * property will have details.
+   *
+   * @param int $email_id The email ID
+   * @param string $recipient Email address to send the test to.
+   * @return Emfl_Response
+   * @see https://apidocs.emailer.emfluence.com/endpoints/emails/sendTest
+   */
+  function emails_sendTest( $email_id, $recipient ) {
+    $response = $this->call('emails/sendTest', array(
+        'emailID' => $email_id,
+        'recipientEmail' => $recipient
+    ));
+    if(empty($response)) return FALSE; // Transmission error
+    return $response;
+  }
+  
 }
