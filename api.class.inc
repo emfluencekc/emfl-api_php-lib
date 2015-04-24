@@ -22,9 +22,10 @@ function emfl_response_is_error( $response ) {
  */
 class Emfl_Platform_API {
 
-  var $apikey;
-  var $url = 'https://api.emailer.emfluence.com/v0';
-  var $timeout = 15; // Low so that if the Platform API is slow, it doesn't cause this script to time out.
+  CONST API_URL = 'https://api.emailer.emfluence.com/v0';
+
+  private $apikey;
+  public $timeout = 15; // Low so that if the Platform API is slow, it doesn't cause this script to time out.
   
   /**
    * The function or method to call when an error occurs.
@@ -36,13 +37,25 @@ class Emfl_Platform_API {
   var $error_function;
 
   /**
+   * Provides an internal storage for errors produced by this api.
+   * This will be used if an error function is not provided
+   */
+  var $errors = NULL;
+
+  /**
    * @param string $api_key
    * @param string $error_function Function name. 
    * The function gets passed any error message as a string parameter.
    */
   function __construct( $api_key, $error_function = NULL ) {
     $this->apikey = $api_key;
-    $this->error_function = $error_function;
+
+    if( !empty($error_function) ) {
+      $this->error_function = $error_function;
+    } else {
+      $this->errors = new Emfl_Platform_API_Errors();
+      $this->error_function = array($this->errors, 'add');
+    }
   }
 
   /**
@@ -83,7 +96,7 @@ class Emfl_Platform_API {
   function call( $endpoint, $params ) {
 
     // make the call with the best request handler available
-    $url = $this->url . '/' . $endpoint;
+    $url = self::API_URL . '/' . $endpoint;
     $params['apiKey'] = $this->apikey;
 
     if( function_exists('drupal_http_request') && defined('VERSION') ) {
@@ -150,7 +163,7 @@ class Emfl_Platform_API {
 
     // Look for transmission fail
     if( !isset($response->code) || ($response->code != 200) ) {
-      $this->err( 'Transmission fail: ' . var_export($response, TRUE) );
+      $this->err( 'Transmission failure ' . var_export($response, TRUE) );
       return FALSE;
     }
 
@@ -245,7 +258,43 @@ class Emfl_Platform_API {
     if(!empty( $response->data )) $response->data = new Emfl_Contacts_Import($response->data);
     return $response;
   }
-  
+
+  ////////////
+  // Groups //
+  ////////////
+
+  /**
+   * Groups / search
+   *
+   * The return value could be FALSE if a transmission error occurred,
+   * like being blocked by the Platform or a network issue.
+   *
+   * Otherwise even bad API calls will get an Emfl_Response object
+   * that corresponds with the Platform's response format. See here:
+   * http://apidocs.emailer.emfluence.com/#responses
+   *
+   * Don't forget to check the 'success' property before assuming that
+   * the operation occurred correctly. If an error occurred, the 'data'
+   * property will be FALSE and the 'errors' property will have details.
+   *
+   * Finally, if the operation was successful, the 'data' property is a
+   * populated Emfl_Group_Search object with paging details and a records
+   * list of groups. Note however that the populated group objects are not
+   * complete group objects, as per the API documentation.
+   *
+   * @param array $params Keyed values, per API documentation
+   * @return Emfl_Response
+   * @see https://apidocs.emailer.emfluence.com/endpoints/groups/search
+   */
+  function groups_search( $params = array() ) {
+    $response = $this->call('groups/search', $params);
+    if(empty($response)) return FALSE; // Transmission error
+    if(!empty($response->data)) {
+      require_once 'response_objects/groups.search.class.inc';
+      $response->data = new Emfl_Groups_Search($response->data->paging, $response->data->records);
+    }
+    return $response;
+  }
   
   ////////////
   // Emails //
@@ -274,7 +323,7 @@ class Emfl_Platform_API {
    * @return Emfl_Response
    * @see https://apidocs.emailer.emfluence.com/endpoints/emails/copy
    */
-  function emails_search( $params ) {
+  function emails_search( $params = array() ) {
     $response = $this->call('emails/search', $params);
     if(empty($response)) return FALSE; // Transmission error
     if(!empty($response->data)) {
@@ -429,4 +478,53 @@ class Emfl_Platform_API {
     return $response;
   }
   
+}
+
+/**
+ * Class Emfl_Platform_API_Errors
+ * Provides basic error storage and retrieval
+ */
+class Emfl_Platform_API_Errors {
+  protected $errors = array();
+
+  /**
+   * Adds an error to the list
+   * @param $error
+   */
+  function add($error){
+    $this->errors[] = $error;
+  }
+
+  /**
+   * Retrieves all errors
+   * @param boolean $clear = FALSE
+   * @return array
+   */
+  function get($clear = FALSE){
+    $errors = $this->errors;
+    if( $clear ){
+      $this->clear();
+    }
+    return $errors;
+  }
+
+  /**
+   * Retrieves the last error
+   * @param boolean $clear = FALSE
+   * @return string
+   */
+  function get_last($clear = FALSE){
+    $errors = $this->errors;
+    if( $clear ){
+      $this->clear();
+    }
+    return array_pop($errors);
+  }
+
+  /**
+   * Empties the error list
+   */
+  function clear(){
+    $this->errors = array();
+  }
 }
