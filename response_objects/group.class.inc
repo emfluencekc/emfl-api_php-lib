@@ -2,15 +2,21 @@
 
 class Emfl_Group {
 
-  var $friendlyName;
-  var $dateAdded;
-  var $description;
-  var $groupID;
-  var $private;
-  var $dateModified;
-  var $groupName;
-  var $autoResponseEmailID;
   var $userID;
+  var $groupID;
+  var $groupName;
+  var $friendlyName;
+  
+  var $dateAdded;
+  var $dateModified;
+  var $dateLastEmailSent;
+  
+  var $description;
+  var $private;
+  var $status;
+  var $autoResponseEmailID;
+  var $totalMembers;
+  var $activeMembers;
 
   /**
    * @param array | stdClass $data Containing the properties to set
