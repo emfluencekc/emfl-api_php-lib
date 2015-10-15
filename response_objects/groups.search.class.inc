@@ -8,7 +8,7 @@ class Emfl_Groups_Search {
   var $paging = array();
   
   /**
-   * @var Emfl_Email[]
+   * @var Emfl_Group[]
    */
   var $records = array();
   
