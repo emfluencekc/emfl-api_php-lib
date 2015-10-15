@@ -38,7 +38,8 @@ class Emfl_Platform_API {
 
   /**
    * Provides an internal storage for errors produced by this api.
-   * This will be used if an error function is not provided
+   * This will be used if an error function is not provided.
+   * @var Emfl_Platform_API_Errors
    */
   var $errors = NULL;
 
@@ -202,6 +203,63 @@ class Emfl_Platform_API {
   //////////////
   
   /**
+   * Delete an existing contact record. Suppressed records cannot be deleted.
+   *
+   * The return value could be FALSE if a transmission error occurred,
+   * like being blocked by the Platform or a network issue.
+   *
+   * Otherwise even bad API calls will get an Emfl_Response object
+   * that corresponds with the Platform's response format. See here:
+   * http://apidocs.emailer.emfluence.com/#responses
+   *
+   * Don't forget to check the 'success' property before assuming that
+   * the operation occurred correctly. If an error occurred, the 'errors' 
+   * property will have details.
+   *
+   * @param int $contactID Per the API reference.
+   * @return bool | Emfl_Response
+   * @see https://apidocs.emailer.emfluence.com/v1/endpoints/contacts/delete
+   */
+  function contacts_delete( $contactID ) {
+    $response = $this->call('contacts/delete', array( 'contactID' => $contactID ));
+    if(empty($response)) return FALSE; // Transmission error
+    return $response;
+  }
+  
+  /**
+   * Get full details for contacts by either contactID or email
+   *
+   * The return value could be FALSE if a transmission error occurred,
+   * like being blocked by the Platform or a network issue.
+   *
+   * Otherwise even bad API calls will get an Emfl_Response object
+   * that corresponds with the Platform's response format. See here:
+   * http://apidocs.emailer.emfluence.com/#responses
+   *
+   * Don't forget to check the 'success' property before assuming that
+   * the operation occurred correctly. If an error occurred, the 'data'
+   * property will be FALSE and the 'errors' property will have details.
+   *
+   * Finally, if the operation was successful, the 'data' property is 
+   * either a populated Emfl_Contact object or an array of them.
+   *
+   * @param array $params Per the API reference.
+   * @return bool | Emfl_Response
+   * @see https://apidocs.emailer.emfluence.com/v1/endpoints/contacts/lookup
+   */
+  function contacts_lookup( $params ) {
+    $response = $this->call('contacts/lookup', $params);
+    if(empty($response)) return FALSE; // Transmission error
+    require_once 'response_objects/contact.class.inc';
+    if(!empty( $response->data )) {
+      if(is_array($response->data)) {
+        foreach($response->data as &$record) $record = new Emfl_Contact($record);
+      } else $response->data = new Emfl_Contact($response->data);
+    }
+    return $response;
+  }
+  
+  /**
    * Save a contact and get the saved contact in return.
    *
    * The return value could be FALSE if a transmission error occurred,
@@ -220,7 +278,7 @@ class Emfl_Platform_API {
    *
    * @param array $params Per the API reference.
    * @return bool | Emfl_Response
-   * @see https://apidocs.emailer.emfluence.com/endpoints/contacts/save
+   * @see https://apidocs.emailer.emfluence.com/v1/endpoints/contacts/save
    */
   function contacts_save( $params ) {
     $response = $this->call('contacts/save', $params);
@@ -278,7 +336,7 @@ class Emfl_Platform_API {
    *
    * @param array $params Per the API reference.
    * @return bool | Emfl_Response
-   * @see https://apidocs.emailer.emfluence.com/endpoints/contacts/import
+   * @see https://apidocs.emailer.emfluence.com/v1/endpoints/contacts/import
    */
   function contacts_import( $params ) {
     $response = $this->call('contacts/import', $params);
@@ -313,7 +371,7 @@ class Emfl_Platform_API {
    *
    * @param array $params Keyed values, per API documentation
    * @return Emfl_Response
-   * @see https://apidocs.emailer.emfluence.com/endpoints/groups/search
+   * @see https://apidocs.emailer.emfluence.com/v1/endpoints/groups/search
    */
   function groups_search( $params = array() ) {
     $response = $this->call('groups/search', $params);
@@ -350,7 +408,7 @@ class Emfl_Platform_API {
    *
    * @param array $params Keyed values, per API documentation
    * @return Emfl_Response
-   * @see https://apidocs.emailer.emfluence.com/endpoints/emails/copy
+   * @see https://apidocs.emailer.emfluence.com/v1/endpoints/emails/copy
    */
   function emails_search( $params = array() ) {
     $response = $this->call('emails/search', $params);
@@ -381,7 +439,7 @@ class Emfl_Platform_API {
    * 
    * @param int $email_id The email ID
    * @return boolean| Emfl_Response
-   * @see https://apidocs.emailer.emfluence.com/endpoints/emails/lookup
+   * @see https://apidocs.emailer.emfluence.com/v1/endpoints/emails/lookup
    */
   function emails_lookup( $email_id ) {
     $response = $this->call('emails/lookup', array('emailID' => $email_id));
@@ -412,7 +470,7 @@ class Emfl_Platform_API {
    * 
    * @param Emfl_Email $email It's probably best to use a response object from an emails_lookup call as the input here.
    * @return Emfl_Response
-   * @see https://apidocs.emailer.emfluence.com/endpoints/emails/save
+   * @see https://apidocs.emailer.emfluence.com/v1/endpoints/emails/save
    */
   function emails_save( Emfl_Email $email ) {
     $response = $this->call('emails/save', (array) $email );
@@ -441,7 +499,7 @@ class Emfl_Platform_API {
    *
    * @param int $email_id The email ID
    * @return Emfl_Response
-   * @see https://apidocs.emailer.emfluence.com/endpoints/emails/copy
+   * @see https://apidocs.emailer.emfluence.com/v1/endpoints/emails/copy
    */
   function emails_copy( $email_id ) {
     $response = $this->call('emails/copy', array('emailID' => $email_id));
@@ -468,7 +526,7 @@ class Emfl_Platform_API {
    * @param int $email_id The email ID
    * @param string $schedule_send_time Future date when email should be sent, in GMT. Format: Y-m-d H:i:s
    * @return Emfl_Response
-   * @see https://apidocs.emailer.emfluence.com/endpoints/emails/copy
+   * @see https://apidocs.emailer.emfluence.com/v1/endpoints/emails/copy
    */
   function emails_schedule( $email_id, $schedule_send_time ) {
     $response = $this->call('emails/schedule', array(
@@ -496,7 +554,7 @@ class Emfl_Platform_API {
    * @param int $email_id The email ID
    * @param string $recipient Email address to send the test to.
    * @return Emfl_Response
-   * @see https://apidocs.emailer.emfluence.com/endpoints/emails/sendTest
+   * @see https://apidocs.emailer.emfluence.com/v1/endpoints/emails/sendTest
    */
   function emails_sendTest( $email_id, $recipient ) {
     $response = $this->call('emails/sendTest', array(

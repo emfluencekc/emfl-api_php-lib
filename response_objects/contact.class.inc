@@ -24,36 +24,25 @@ class Emfl_Contact extends Emfl_Response_Generic {
   var $zipCode;
   var $country; 
   
-  var $content1;
-  var $content2;
-  var $content3; 
+  /**
+   * @var array[]
+   */
+  var $contentVariables;
   
-  var $custom1; 
-  var $custom2; 
-  var $custom3; 
-  var $custom4; 
-  var $custom5; 
-  var $custom6; 
-  var $custom7; 
-  var $custom8;
-  var $custom9; 
-  var $custom10; 
-  var $custom11; 
-  var $custom12; 
-  var $custom13; 
-  var $custom14; 
-  var $custom15; 
-  var $custom16; 
-  var $custom17; 
-  var $custom18; 
-  var $custom19; 
-  var $custom20; 
+  /**
+   * @var array[]
+   */
+  var $customFields;
+  
+  /**
+   * @var int[]
+   */
+  var $groupIDs;
   
   var $dateAdded; 
   var $dateHeld; 
   var $dateModified; 
   var $dateSuppressed; 
-  var $groupIDs; 
   var $held; 
   var $ipAddress;
   var $memo; 

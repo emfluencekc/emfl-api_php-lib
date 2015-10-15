@@ -19,7 +19,7 @@ class Emfl_Response {
   
   /**
    * Successful operations should cause this to be filled with an object of some type.
-   * @var FALSE | mixed
+   * @var Emfl_Response_Generic | Emfl_Contact | Emfl_Contacts_Import | Emfl_Email | mixed | FALSE
    */
   var $data;
   
