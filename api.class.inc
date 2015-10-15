@@ -44,7 +44,7 @@ class Emfl_Platform_API {
   var $errors = NULL;
 
   /**
-   * @param string $access_key
+   * @param string $access_token
    * @param string $error_function Function name. 
    * The function gets passed any error message as a string parameter.
    */
@@ -187,7 +187,7 @@ class Emfl_Platform_API {
   //////////
   
   /**
-   * Test method, use it to see whether API key,
+   * Test method, use it to see whether API token,
    * error_function and request handlers are working.
    *
    * @see http://apidocs.emailer.emfluence.com/#responses

@@ -12,6 +12,6 @@ $result = $emfl->ping();
 echo '<h1>RESULT</h1><pre>' . var_export($result, TRUE) . '</pre>';
 ```
 
-This will give you a response, even though the API key is bogus.
+This will give you a response, even though the API token is bogus.
 
 Check out example.php for a ready-to-use version of this.

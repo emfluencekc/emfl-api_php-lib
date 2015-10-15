@@ -1,6 +1,6 @@
 <?php 
 
-define( 'EMFL_PLATFORM_API_KEY', '123abc' );
+define( 'EMFL_PLATFORM_API_TOKEN', '123abc' );
 
 /**
  * Get a singleton API library instance
@@ -11,7 +11,7 @@ function emfl_get_api_instace() {
   if(!empty($wrapper)) return $wrapper;
 
   require_once('api.class.inc');
-  $wrapper = new Emfl_Platform_API( EMFL_PLATFORM_API_KEY, 'emfl_api_error' );
+  $wrapper = new Emfl_Platform_API( EMFL_PLATFORM_API_TOKEN, 'emfl_api_error' );
   return $wrapper;
 }
 
