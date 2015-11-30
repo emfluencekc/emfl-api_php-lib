@@ -24,7 +24,7 @@ class Emfl_Platform_API {
 
   CONST API_URL = 'https://api.emailer.emfluence.com/v1';
 
-  private $access_token;
+  private $access_token; // Private so that it can't be changed after instantiation.
   public $timeout = 15; // Low so that if the Platform API is slow, it doesn't cause this script to time out.
   
   /**
@@ -47,8 +47,10 @@ class Emfl_Platform_API {
    * @param string $access_token
    * @param string $error_function Function name. 
    * The function gets passed any error message as a string parameter.
+   * @throws Exception If the access token is empty.
    */
   function __construct( $access_token, $error_function = NULL ) {
+    if(empty($access_token)) throw new Exception('Emfluence API library instantiated with an empty access token.');
     $this->access_token = $access_token;
 
     if( !empty($error_function) ) {
