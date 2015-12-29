@@ -53,11 +53,9 @@ class Emfl_Platform_API {
     if(empty($access_token)) throw new Exception('Emfluence API library instantiated with an empty access token.');
     $this->access_token = $access_token;
 
+    $this->errors = new Emfl_Platform_API_Errors();
     if( !empty($error_function) ) {
       $this->error_function = $error_function;
-    } else {
-      $this->errors = new Emfl_Platform_API_Errors();
-      $this->error_function = array($this->errors, 'add');
     }
   }
 
@@ -66,6 +64,7 @@ class Emfl_Platform_API {
    * @param string $msg
    */
   private function err( $msg ) {
+    $this->errors->add($msg);
     $func = $this->error_function;
     if( empty($func) || !is_callable($func) ) return; 
     if( is_string($func) ) {
@@ -125,20 +124,25 @@ class Emfl_Platform_API {
         );
       }
 
-    } elseif( function_exists('wp_remote_post') && false ) {
+    } elseif( function_exists('wp_remote_post') ) {
       // Wordpress request handler
       $response = wp_remote_post(
-      	$url,
-        array(
-          'timeout' => $this->timeout,
-        	'headers' => array( array( 'Content-Type' => 'application/json' ) ),
-          'body' => json_encode( (object) $params )
-        )
-      );    dbgout($response);
+          $url,
+          array(
+              'timeout' => $this->timeout,
+              'headers' => array( 'Content-Type' => 'application/json' ),
+              'body' => json_encode( (object) $params )
+          )
+      );
 
       if( !is_wp_error($response) ) {
-        $response = (object) $response['response'];
-        $response->data = $response->body;
+        $response = (object) array(
+            'data' => $response['body'],
+            'code' => $response['response']['code']
+        );
+      } else {
+        $this->err('wp_remote_post returned an error: ' . var_export($response, TRUE));
+        return FALSE;
       }
 
     } elseif( function_exists('curl_init') ) {
