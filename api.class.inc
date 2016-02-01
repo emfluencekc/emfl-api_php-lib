@@ -141,7 +141,7 @@ class Emfl_Platform_API {
             'code' => $response['response']['code']
         );
       } else {
-        $this->err('wp_remote_post returned an error: ' . var_export($response, TRUE));
+        $this->err('wp_remote_post returned an error for ' . $endpoint . ': ' . var_export($response, TRUE));
         return FALSE;
       }
 
@@ -170,7 +170,7 @@ class Emfl_Platform_API {
 
     // Look for transmission fail
     if( !isset($response->code) || ($response->code != 200) ) {
-      $this->err( 'Transmission failure ' . var_export($response, TRUE) );
+      $this->err( $endpoint . ': Transmission failure ' . var_export($response, TRUE) );
       return FALSE;
     }
 
@@ -181,7 +181,7 @@ class Emfl_Platform_API {
 
     // Look for API fail
     if($response->success != 1) {
-      $this->err( 'Bad API call: ' . $response->code . ' - ' . var_export($response->errors, TRUE) );
+      $this->err( 'Bad API call to ' . $endpoint . ': ' . $response->code . ' - ' . var_export($response->errors, TRUE) );
     }
 
     return $response;
