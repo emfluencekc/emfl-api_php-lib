@@ -203,6 +203,57 @@ class Emfl_Platform_API {
     return $this->call( 'helper/ping', array() );
   }
 
+  /**
+   * Get a stub response: The structure of a response with blank data.
+   * Useful in unit testing.
+   * @param string $endpoint The API endpoint, not beginning with a slash.
+   * Eg, 'helper/ping' would be an endpoint.
+   * @return Emfl_Response
+   */
+  function call_stub($endpoint) {
+    $response = new Emfl_Response((object) array(
+        'data' => '',
+        'code' => ''
+    ));
+    switch($endpoint) {
+      case 'contacts/lookup':
+        require_once 'response_objects/contact.class.inc';
+        $response->data = new Emfl_Contact();
+        break;
+      case 'groups/search':
+        require_once 'response_objects/groups.search.class.inc';
+        $response->data = new Emfl_Groups_Search(
+            (object) array(
+                "next" => NULL,
+                "page" => NULL,
+                "rpp" => NULL,
+                "totalPages" => NULL,
+                "totalRecords" => NULL,
+                "prev" => NULL
+            ),
+            array());
+        break;
+      case 'emails/search':
+        require_once 'response_objects/emails.search.class.inc';
+        $response->data = new Emfl_Emails_Search(
+            (object) array(
+                "next" => NULL,
+                "page" => NULL,
+                "rpp" => NULL,
+                "totalPages" => NULL,
+                "totalRecords" => NULL,
+                "prev" => NULL
+              ),
+            array());
+        break;
+      case 'emails/lookup':
+        require_once 'response_objects/email.class.inc';
+        $response->data = new Emfl_Email();
+        break;
+    }
+    return $response;
+  }
+
   
   //////////////
   // Contacts //
