@@ -222,8 +222,9 @@ class Emfl_Platform_API {
         $response->data = new Emfl_Contact();
         break;
       case 'groups/search':
-        require_once 'response_objects/groups.search.class.inc';
-        $response->data = new Emfl_Groups_Search(
+        require_once 'response_objects/wrapper.pagingplusrecords.class.inc';
+        require_once 'response_objects/group.class.inc';
+        $response->data = new Emfl_PagingPlusRecords(
             (object) array(
                 "next" => NULL,
                 "page" => NULL,
@@ -232,11 +233,13 @@ class Emfl_Platform_API {
                 "totalRecords" => NULL,
                 "prev" => NULL
             ),
-            array());
+            array(),
+            'Emfl_Group');
         break;
       case 'emails/search':
-        require_once 'response_objects/emails.search.class.inc';
-        $response->data = new Emfl_Emails_Search(
+        require_once 'response_objects/wrapper.pagingplusrecords.class.inc';
+        require_once 'response_objects/email.class.inc';
+        $response->data = new Emfl_PagingPlusRecords(
             (object) array(
                 "next" => NULL,
                 "page" => NULL,
@@ -244,12 +247,30 @@ class Emfl_Platform_API {
                 "totalPages" => NULL,
                 "totalRecords" => NULL,
                 "prev" => NULL
-              ),
-            array());
+            ),
+            array(),
+            'Emfl_Email'
+          );
         break;
       case 'emails/lookup':
         require_once 'response_objects/email.class.inc';
         $response->data = new Emfl_Email();
+        break;
+      case 'emailReports/recipients':
+        require_once 'response_objects/wrapper.pagingplusrecords.class.inc';
+        require_once 'response_objects/emailreports.recipient.class.inc';
+        $response->data = new Emfl_PagingPlusRecords(
+            (object) array(
+                "next" => NULL,
+                "page" => NULL,
+                "rpp" => NULL,
+                "totalPages" => NULL,
+                "totalRecords" => NULL,
+                "prev" => NULL
+            ),
+            array(),
+            'Emfl_EmailReport_Recipient'
+        );
         break;
     }
     return $response;
@@ -404,6 +425,7 @@ class Emfl_Platform_API {
     return $response;
   }
 
+
   ////////////
   // Groups //
   ////////////
@@ -423,9 +445,9 @@ class Emfl_Platform_API {
    * property will be FALSE and the 'errors' property will have details.
    *
    * Finally, if the operation was successful, the 'data' property is a
-   * populated Emfl_Group_Search object with paging details and a records
-   * list of groups. Note however that the populated group objects are not
-   * complete group objects, as per the API documentation.
+   * populated Emfl_PagingPlusRecords object with paging details and a records
+   * list of Emfl_Group groups. Note however that the populated group objects
+   * are not complete group objects, as per the API documentation.
    *
    * @param array $params Keyed values, per API documentation
    * @return Emfl_Response
@@ -435,12 +457,17 @@ class Emfl_Platform_API {
     $response = $this->call('groups/search', $params);
     if(empty($response)) return FALSE; // Transmission error
     if(!empty($response->data)) {
-      require_once 'response_objects/groups.search.class.inc';
-      $response->data = new Emfl_Groups_Search($response->data->paging, $response->data->records);
+      require_once 'response_objects/wrapper.pagingplusrecords.class.inc';
+      require_once 'response_objects/group.class.inc';
+      $response->data = new Emfl_PagingPlusRecords(
+          $response->data->paging,
+          $response->data->records,
+          'Emfl_Group');
     }
     return $response;
   }
-  
+
+
   ////////////
   // Emails //
   ////////////
@@ -460,9 +487,9 @@ class Emfl_Platform_API {
    * property will be FALSE and the 'errors' property will have details.
    *
    * Finally, if the operation was successful, the 'data' property is a
-   * populated Emfl_Email_Search object with paging details and a records 
-   * list of emails. Note however that the populated email objects are not 
-   * complete email objects, as per the API documentation.
+   * populated Emfl_PagingPlusRecords object with paging details and a records
+   * list of Emfl_Email emails. Note however that the populated email objects
+   * are not complete email objects, as per the API documentation.
    *
    * @param array $params Keyed values, per API documentation
    * @return Emfl_Response
@@ -472,8 +499,13 @@ class Emfl_Platform_API {
     $response = $this->call('emails/search', $params);
     if(empty($response)) return FALSE; // Transmission error
     if(!empty($response->data)) {
-      require_once 'response_objects/emails.search.class.inc';
-      $response->data = new Emfl_Emails_Search($response->data->paging, $response->data->records);
+      require_once 'response_objects/wrapper.pagingplusrecords.class.inc';
+      require_once 'response_objects/email.class.inc';
+      $response->data = new Emfl_PagingPlusRecords(
+          $response->data->paging,
+          $response->data->records,
+          'Emfl_Email'
+        );
     }
     return $response;
   }
@@ -622,7 +654,49 @@ class Emfl_Platform_API {
     if(empty($response)) return FALSE; // Transmission error
     return $response;
   }
-  
+
+
+  ///////////////////
+  // Email Reports //
+  ///////////////////
+
+  /**
+   * EmailReports / recipients
+   *
+   * The return value could be FALSE if a transmission error occurred,
+   * like being blocked by the Platform or a network issue.
+   *
+   * Otherwise even bad API calls will get an Emfl_Response object
+   * that corresponds with the Platform's response format. See here:
+   * http://apidocs.emailer.emfluence.com/#responses
+   *
+   * Don't forget to check the 'success' property before assuming that
+   * the operation occurred correctly. If an error occurred, the 'data'
+   * property will be FALSE and the 'errors' property will have details.
+   *
+   * Finally, if the operation was successful, the 'data' property is a
+   * populated Emfl_PagingPlusRecords object with paging details and a records
+   * list of Emfl_EmailReport_Recipient recipients.
+   *
+   * @param array $params Keyed values, per API documentation
+   * @return Emfl_Response
+   * @see https://apidocs.emailer.emfluence.com/v1/endpoints/emailReports/recipients
+   */
+  function emailreports_recipients( $params = array() ) {
+    $response = $this->call('emailReports/recipients', $params);
+    if(empty($response)) return FALSE; // Transmission error
+    if(!empty($response->data)) {
+      require_once 'response_objects/wrapper.pagingplusrecords.class.inc';
+      require_once 'response_objects/emailreports.recipient.class.inc';
+      $response->data = new Emfl_PagingPlusRecords(
+          $response->data->paging,
+          $response->data->records,
+          'Emfl_EmailReport_Recipient'
+        );
+    }
+    return $response;
+  }
+
 }
 
 /**
