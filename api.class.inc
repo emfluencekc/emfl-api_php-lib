@@ -211,6 +211,7 @@ class Emfl_Platform_API {
    * @return Emfl_Response
    */
   function call_stub($endpoint) {
+    require_once 'response_objects/wrapper.class.inc';
     $response = new Emfl_Response((object) array(
         'data' => '',
         'code' => ''
