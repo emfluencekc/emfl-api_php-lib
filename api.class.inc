@@ -272,6 +272,38 @@ class Emfl_Platform_API {
             'Emfl_EmailReport_Recipient'
         );
         break;
+      case 'emailReports/views':
+        require_once 'response_objects/wrapper.pagingplusrecords.class.inc';
+        require_once 'response_objects/emailreports.view.class.inc';
+        $response->data = new Emfl_PagingPlusRecords(
+            (object) array(
+                "next" => NULL,
+                "page" => NULL,
+                "rpp" => NULL,
+                "totalPages" => NULL,
+                "totalRecords" => NULL,
+                "prev" => NULL
+            ),
+            array(),
+            'Emfl_EmailReport_View'
+        );
+        break;
+      case 'emailReports/clicks':
+        require_once 'response_objects/wrapper.pagingplusrecords.class.inc';
+        require_once 'response_objects/emailreports.click.class.inc';
+        $response->data = new Emfl_PagingPlusRecords(
+            (object) array(
+                "next" => NULL,
+                "page" => NULL,
+                "rpp" => NULL,
+                "totalPages" => NULL,
+                "totalRecords" => NULL,
+                "prev" => NULL
+            ),
+            array(),
+            'Emfl_EmailReport_Click'
+        );
+        break;
     }
     return $response;
   }
@@ -697,6 +729,79 @@ class Emfl_Platform_API {
     return $response;
   }
 
+  /**
+   * EmailReports / views
+   *
+   * The return value could be FALSE if a transmission error occurred,
+   * like being blocked by the Platform or a network issue.
+   *
+   * Otherwise even bad API calls will get an Emfl_Response object
+   * that corresponds with the Platform's response format. See here:
+   * http://apidocs.emailer.emfluence.com/#responses
+   *
+   * Don't forget to check the 'success' property before assuming that
+   * the operation occurred correctly. If an error occurred, the 'data'
+   * property will be FALSE and the 'errors' property will have details.
+   *
+   * Finally, if the operation was successful, the 'data' property is a
+   * populated Emfl_PagingPlusRecords object with paging details and a records
+   * list of Emfl_EmailReport_Recipient recipients.
+   *
+   * @param array $params Keyed values, per API documentation
+   * @return Emfl_Response
+   * @see https://apidocs.emailer.emfluence.com/v1/endpoints/emailReports/recipients
+   */
+  function emailreports_views( $params = array() ) {
+    $response = $this->call('emailReports/views', $params);
+    if(empty($response)) return FALSE; // Transmission error
+    if(!empty($response->data)) {
+      require_once 'response_objects/wrapper.pagingplusrecords.class.inc';
+      require_once 'response_objects/emailreports.view.class.inc';
+      $response->data = new Emfl_PagingPlusRecords(
+          $response->data->paging,
+          $response->data->records,
+          'Emfl_EmailReport_View'
+        );
+    }
+    return $response;
+  }
+
+  /**
+   * EmailReports / opens
+   *
+   * The return value could be FALSE if a transmission error occurred,
+   * like being blocked by the Platform or a network issue.
+   *
+   * Otherwise even bad API calls will get an Emfl_Response object
+   * that corresponds with the Platform's response format. See here:
+   * http://apidocs.emailer.emfluence.com/#responses
+   *
+   * Don't forget to check the 'success' property before assuming that
+   * the operation occurred correctly. If an error occurred, the 'data'
+   * property will be FALSE and the 'errors' property will have details.
+   *
+   * Finally, if the operation was successful, the 'data' property is a
+   * populated Emfl_PagingPlusRecords object with paging details and a records
+   * list of Emfl_EmailReport_Recipient recipients.
+   *
+   * @param array $params Keyed values, per API documentation
+   * @return Emfl_Response
+   * @see https://apidocs.emailer.emfluence.com/v1/endpoints/emailReports/recipients
+   */
+  function emailreports_opens( $params = array() ) {
+    $response = $this->call('emailReports/opens', $params);
+    if(empty($response)) return FALSE; // Transmission error
+    if(!empty($response->data)) {
+      require_once 'response_objects/wrapper.pagingplusrecords.class.inc';
+      require_once 'response_objects/emailreports.open.class.inc';
+      $response->data = new Emfl_PagingPlusRecords(
+          $response->data->paging,
+          $response->data->records,
+          'Emfl_EmailReport_Open'
+        );
+    }
+    return $response;
+  }
 }
 
 /**
