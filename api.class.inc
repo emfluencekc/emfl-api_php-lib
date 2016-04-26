@@ -749,7 +749,7 @@ class Emfl_Platform_API {
    *
    * @param array $params Keyed values, per API documentation
    * @return Emfl_Response
-   * @see https://apidocs.emailer.emfluence.com/v1/endpoints/emailReports/recipients
+   * @see https://apidocs.emailer.emfluence.com/v1/endpoints/emailReports/views
    */
   function emailreports_views( $params = array() ) {
     $response = $this->call('emailReports/views', $params);
@@ -767,7 +767,7 @@ class Emfl_Platform_API {
   }
 
   /**
-   * EmailReports / opens
+   * EmailReports / clicks
    *
    * The return value could be FALSE if a transmission error occurred,
    * like being blocked by the Platform or a network issue.
@@ -786,18 +786,18 @@ class Emfl_Platform_API {
    *
    * @param array $params Keyed values, per API documentation
    * @return Emfl_Response
-   * @see https://apidocs.emailer.emfluence.com/v1/endpoints/emailReports/recipients
+   * @see https://apidocs.emailer.emfluence.com/v1/endpoints/emailReports/clicks
    */
-  function emailreports_opens( $params = array() ) {
-    $response = $this->call('emailReports/opens', $params);
+  function emailreports_clicks( $params = array() ) {
+    $response = $this->call('emailReports/clicks', $params);
     if(empty($response)) return FALSE; // Transmission error
     if(!empty($response->data)) {
       require_once 'response_objects/wrapper.pagingplusrecords.class.inc';
-      require_once 'response_objects/emailreports.open.class.inc';
+      require_once 'response_objects/emailreports.click.class.inc';
       $response->data = new Emfl_PagingPlusRecords(
           $response->data->paging,
           $response->data->records,
-          'Emfl_EmailReport_Open'
+          'Emfl_EmailReport_Click'
         );
     }
     return $response;
