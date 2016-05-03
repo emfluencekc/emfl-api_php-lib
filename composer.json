@@ -1,0 +1,10 @@
+{
+  "name": "jacobischwartz/emfl-api_php-lib",
+  "type": "library",
+  "description": "emfluence Market Platform API library, written in PHP",
+  "autoload": {
+    "classmap": [
+      "./"
+    ]
+  }
+}
