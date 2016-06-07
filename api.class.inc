@@ -102,67 +102,18 @@ class Emfl_Platform_API {
     $params['accessToken'] = $this->access_token;
 
     if( function_exists('drupal_http_request') && defined('VERSION') ) {
-      // Drupal request handler
-      if( VERSION > 7 ) {
-        $response = drupal_http_request(
-            $url,
-            array(
-              'headers' => array( 'Content-Type' => 'application/json' ),
-              'method' => 'POST',
-              'data' => json_encode( (object) $params),
-              'timeout' => $this->timeout
-                )
-        );
-      } else {
-        $response = drupal_http_request(
-            $url,
-            array( 'Content-Type' => 'application/json' ),
-            'POST',
-            json_encode( (object) $params),
-            1,
-            $this->timeout
-        );
-      }
-
+      require_once 'request/drupal.php';
+      $response = emfl_platform_api_drupal_request($url, $params, $this->timeout);
     } elseif( function_exists('wp_remote_post') ) {
-      // Wordpress request handler
-      $response = wp_remote_post(
-          $url,
-          array(
-              'timeout' => $this->timeout,
-              'headers' => array( 'Content-Type' => 'application/json' ),
-              'body' => json_encode( (object) $params )
-          )
-      );
-
-      if( !is_wp_error($response) ) {
-        $response = (object) array(
-            'data' => $response['body'],
-            'code' => $response['response']['code']
-        );
-      } else {
-        $this->err('wp_remote_post returned an error for ' . $endpoint . ': ' . var_export($response, TRUE));
+      require_once 'request/wordpress.php';
+      $response = emfl_platform_api_wordpress_request($url, $params, $endpoint, $this->timeout);
+      if(is_string($response)) {
+        $this->err($response);
         return FALSE;
       }
-
     } elseif( function_exists('curl_init') ) {
-      // Fall back on CURL
-      $curl = curl_init($url);
-      curl_setopt($curl, CURLOPT_HEADER, false);
-      curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);
-      curl_setopt($curl, CURLOPT_HTTPHEADER, array("Content-type: application/json"));
-      curl_setopt($curl, CURLOPT_CONNECTTIMEOUT, 2);
-      curl_setopt($curl, CURLOPT_TIMEOUT, $this->timeout);
-      curl_setopt($curl, CURLOPT_POST, true);
-      curl_setopt($curl, CURLOPT_POSTFIELDS, json_encode( (object) $params ) );
-      $json_response = curl_exec($curl);
-      $status = curl_getinfo($curl, CURLINFO_HTTP_CODE);
-      curl_close($curl);
-      $response = (object) array(
-      	'data' => $json_response,
-        'code' => $status
-      );
-
+      require_once 'request/generic.php';
+      $response = emfl_platform_api_generic_request($url, $params, $this->timeout);
     } else {
       $this->err( 'No request handler could be found. Please install CURL on your server.' );
       return FALSE;
