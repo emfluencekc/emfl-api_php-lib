@@ -57,6 +57,9 @@ class Emfl_Platform_API {
     if( !empty($error_function) ) {
       $this->error_function = $error_function;
     }
+    
+    // Wordpress VIP hosting requirement:
+    if(defined( 'WPCOM_IS_VIP_ENV' )) $this->timeout = 3;
   }
 
   /**
