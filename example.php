@@ -10,7 +10,7 @@ function emfl_get_api_instace() {
   static $wrapper = NULL;
   if(!empty($wrapper)) return $wrapper;
 
-  require_once('api.class.inc');
+  require_once('api.class.php');
   $wrapper = new Emfl_Platform_API( EMFL_PLATFORM_API_TOKEN, 'emfl_api_error' );
   return $wrapper;
 }

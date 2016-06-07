@@ -6,7 +6,7 @@ PHP API library for the emfluence Marketing Platform
 The most simple example possible:
 
 ```php
-require_once('api.class.inc');
+require_once('api.class.php');
 $emfl = new Emfl_Platform_API( '123abc' );
 $result = $emfl->ping();
 echo '<h1>RESULT</h1><pre>' . var_export($result, TRUE) . '</pre>';

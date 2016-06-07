@@ -16,7 +16,7 @@ function emfl_api_unit_tests_run_all() {
   }
   
   define('EMFL_API_TOKEN', $_REQUEST['apitoken']);
-  foreach( glob( __DIR__ . "/tests/*.inc") as $filename ) {
+  foreach( glob( __DIR__ . "/tests/*.php") as $filename ) {
     try {
       include $filename;
     } catch(Exception $e) {
@@ -31,7 +31,7 @@ function emfl_api_unit_tests_run_all() {
  * @return Emfl_Platform_API
  */
 function emfl_api_get_instance() {
-  require_once 'api.class.inc';
+  require_once 'api.class.php';
   $instance = new Emfl_Platform_API(EMFL_API_TOKEN);
   return $instance;
 }

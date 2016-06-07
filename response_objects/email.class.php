@@ -1,6 +1,6 @@
 <?php 
 
-require_once 'generic.class.inc';
+require_once 'generic.class.php';
 
 class Emfl_Email extends Emfl_Response_Generic {
   

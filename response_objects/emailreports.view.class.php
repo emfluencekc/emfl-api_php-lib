@@ -1,8 +1,8 @@
 <?php 
 
-require_once 'generic.class.inc';
+require_once 'generic.class.php';
 
-class Emfl_EmailReport_Click extends Emfl_Response_Generic {
+class Emfl_EmailReport_View extends Emfl_Response_Generic {
 
   /**
    * @var int
@@ -13,11 +13,6 @@ class Emfl_EmailReport_Click extends Emfl_Response_Generic {
    * @var string
    */
   var $email;
-
-  /**
-   * @var string
-   */
-  var $link;
 
   /**
    * @var string
