@@ -44,7 +44,7 @@ function emfl_api_test_contacts() {
   $successes = array();
   $failures = array();
   
-  $response = $api->contacts_lookup(array('email' => $test_new_contact['email']));
+  $response = $api->contacts_lookup(array('email' => $test_new_contact['email'], 'fields' => array('contactID', 'email', 'custom1')));
   $failures = $api->errors->get(TRUE);
   if(!emfl_response_is_error($response) && (TRUE == $response->success) && !empty($response->data)) {
     $successes[] = 'Found ' . $test_new_contact['email'];
@@ -63,6 +63,30 @@ function emfl_api_test_contacts() {
   
   emfl_api_test_output_results('Contacts/Lookup', $successes, $failures);
   
+  /* SEARCH */
+  
+  $api = emfl_api_get_instance();
+  $successes = array();
+  $failures = array();
+  
+  $response = $api->contacts_search(array('email' => $test_new_contact['email'], 'fields' => 'contactID,email,firstName,lastName,custom1'));
+  $failures = $api->errors->get(TRUE);
+  if(!emfl_response_is_error($response) && (TRUE == $response->success) && !empty($response->data)) {
+    $successes[] = 'Found ' . $test_new_contact['email'];
+    foreach($test_new_contact as $fieldname=>$fieldval) {
+      if($fieldname == 'customFields') {
+        foreach($test_new_contact['customFields'] as $custom_name=>$custom_item) {
+          if($response->data->records[0]->$custom_name == $fieldval[$custom_name]['value']) {
+            $successes[] = 'custom field ' . $custom_name . ' correctly returned.';
+          } else $failures[] = 'custom field ' . $custom_name . ' not correctly returned.';
+        }
+      } elseif($response->data->records[0]->$fieldname == $fieldval) {
+        $successes[] = $fieldname . ' correctly returned.';
+      } else $failures[] = $fieldname . ' not correctly returned.';
+    }
+  }
+  
+  emfl_api_test_output_results('Contacts/Search', $successes, $failures);
   
   
   /* DELETE */
@@ -71,7 +95,7 @@ function emfl_api_test_contacts() {
   $successes = array();
   $failures = array();
   
-  $response = $api->contacts_delete($response->data->contactID);
+  $response = $api->contacts_delete($response->data->records[0]->contactID);
   $failures = $api->errors->get(TRUE);
   if(!emfl_response_is_error($response) && (TRUE == $response->success)) {
     $successes[] = 'Deleted ' . $test_new_contact['email'];

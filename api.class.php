@@ -175,6 +175,20 @@ class Emfl_Platform_API {
         require_once 'response_objects/contact.class.php';
         $response->data = new Emfl_Contact();
         break;
+      case 'contacts/search':
+        require_once 'response_objects/contact.class.php';
+        $response->data = new Emfl_PagingPlusRecords(
+            (object) array(
+                "next" => NULL,
+                "page" => NULL,
+                "rpp" => NULL,
+                "totalPages" => NULL,
+                "totalRecords" => NULL,
+                "prev" => NULL
+            ),
+            array(),
+            'Emfl_Contact');
+        break;
       case 'groups/search':
         require_once 'response_objects/wrapper.pagingplusrecords.class.php';
         require_once 'response_objects/group.class.php';
@@ -320,6 +334,41 @@ class Emfl_Platform_API {
       if(is_array($response->data)) {
         foreach($response->data as &$record) $record = new Emfl_Contact($record);
       } else $response->data = new Emfl_Contact($response->data);
+    }
+    return $response;
+  }
+  
+  /**
+   * Search for contacts using various parameters
+   *
+   * The return value could be FALSE if a transmission error occurred,
+   * like being blocked by the Platform or a network issue.
+   *
+   * Otherwise even bad API calls will get an Emfl_Response object
+   * that corresponds with the Platform's response format. See here:
+   * http://apidocs.emailer.emfluence.com/#responses
+   *
+   * Don't forget to check the 'success' property before assuming that
+   * the operation occurred correctly. If an error occurred, the 'data'
+   * property will be FALSE and the 'errors' property will have details.
+   *
+   * Finally, if the operation was successful, the 'data' property is 
+   * either a populated Emfl_Contact object or an array of them.
+   *
+   * @param array $params Per the API reference.
+   * @return bool | Emfl_Response
+   * @see https://apidocs.emailer.emfluence.com/v1/endpoints/contacts/search
+   */
+  function contacts_search( $params ) {
+    $response = $this->call('contacts/search', $params);
+    if(empty($response)) return FALSE; // Transmission error
+    if(!empty($response->data)) {
+      require_once 'response_objects/wrapper.pagingplusrecords.class.php';
+      require_once 'response_objects/contact.class.php';
+      $response->data = new Emfl_PagingPlusRecords(
+          $response->data->paging,
+          $response->data->records,
+          'Emfl_Contact');
     }
     return $response;
   }
