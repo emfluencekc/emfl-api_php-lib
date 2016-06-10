@@ -44,7 +44,7 @@ function emfl_api_test_contacts() {
   $successes = array();
   $failures = array();
   
-  $response = $api->contacts_lookup(array('email' => $test_new_contact['email'], 'fields' => array('contactID', 'email', 'custom1')));
+  $response = $api->contacts_lookup(array('email' => $test_new_contact['email']));
   $failures = $api->errors->get(TRUE);
   if(!emfl_response_is_error($response) && (TRUE == $response->success) && !empty($response->data)) {
     $successes[] = 'Found ' . $test_new_contact['email'];
