@@ -485,7 +485,7 @@ class Emfl_Platform_API {
    * are not complete group objects, as per the API documentation.
    *
    * @param array $params Keyed values, per API documentation
-   * @return Emfl_Response
+   * @return false|Emfl_Response
    * @see https://apidocs.emailer.emfluence.com/v1/endpoints/groups/search
    */
   function groups_search( $params = array() ) {
@@ -527,7 +527,7 @@ class Emfl_Platform_API {
    * are not complete email objects, as per the API documentation.
    *
    * @param array $params Keyed values, per API documentation
-   * @return Emfl_Response
+   * @return false|Emfl_Response
    * @see https://apidocs.emailer.emfluence.com/v1/endpoints/emails/copy
    */
   function emails_search( $params = array() ) {
@@ -563,7 +563,7 @@ class Emfl_Platform_API {
    * populated Emfl_Email object with email details.
    * 
    * @param int $email_id The email ID
-   * @return boolean| Emfl_Response
+   * @return false|Emfl_Response
    * @see https://apidocs.emailer.emfluence.com/v1/endpoints/emails/lookup
    */
   function emails_lookup( $email_id ) {
@@ -594,7 +594,7 @@ class Emfl_Platform_API {
    * populated Emfl_Email object with email details.
    * 
    * @param Emfl_Email $email It's probably best to use a response object from an emails_lookup call as the input here.
-   * @return Emfl_Response
+   * @return false|Emfl_Response
    * @see https://apidocs.emailer.emfluence.com/v1/endpoints/emails/save
    */
   function emails_save( Emfl_Email $email ) {
@@ -623,7 +623,7 @@ class Emfl_Platform_API {
    * populated Emfl_Email object with email details.
    *
    * @param int $email_id The email ID
-   * @return Emfl_Response
+   * @return false|Emfl_Response
    * @see https://apidocs.emailer.emfluence.com/v1/endpoints/emails/copy
    */
   function emails_copy( $email_id ) {
@@ -633,7 +633,31 @@ class Emfl_Platform_API {
     if(!empty( $response->data )) $response->data = new Emfl_Email($response->data);
     return $response;
   }
-  
+
+  /**
+   * Emails / delete
+   *
+   * The return value could be FALSE if a transmission error occurred,
+   * like being blocked by the Platform or a network issue.
+   *
+   * Otherwise even bad API calls will get an Emfl_Response object
+   * that corresponds with the Platform's response format. See here:
+   * http://apidocs.emailer.emfluence.com/#responses
+   *
+   * Don't forget to check the 'success' property before assuming that
+   * the operation occurred correctly. If an error occurred, the 'errors'
+   * property will have details.
+   *
+   * @param int $email_id
+   * @return false|Emfl_Response
+   * @see https://apidocs.emailer.emfluence.com/v1/endpoints/emails/delete
+   */
+  function emails_delete( $email_id ) {
+    $response = $this->call('emails/delete', array('emailID' => $email_id) );
+    if(empty($response)) return FALSE; // Transmission error
+    return $response;
+  }
+
   /**
    * Emails / schedule
    *
@@ -650,7 +674,7 @@ class Emfl_Platform_API {
    *
    * @param int $email_id The email ID
    * @param string $schedule_send_time Future date when email should be sent, in GMT. Format: Y-m-d H:i:s
-   * @return Emfl_Response
+   * @return false|Emfl_Response
    * @see https://apidocs.emailer.emfluence.com/v1/endpoints/emails/copy
    */
   function emails_schedule( $email_id, $schedule_send_time ) {
@@ -678,7 +702,7 @@ class Emfl_Platform_API {
    *
    * @param int $email_id The email ID
    * @param string $recipient Email address to send the test to.
-   * @return Emfl_Response
+   * @return false|Emfl_Response
    * @see https://apidocs.emailer.emfluence.com/v1/endpoints/emails/sendTest
    */
   function emails_sendTest( $email_id, $recipient ) {
@@ -714,7 +738,7 @@ class Emfl_Platform_API {
    * list of Emfl_EmailReport_Recipient recipients.
    *
    * @param array $params Keyed values, per API documentation
-   * @return Emfl_Response
+   * @return false|Emfl_Response
    * @see https://apidocs.emailer.emfluence.com/v1/endpoints/emailReports/recipients
    */
   function emailreports_recipients( $params = array() ) {
@@ -751,7 +775,7 @@ class Emfl_Platform_API {
    * list of Emfl_EmailReport_Recipient recipients.
    *
    * @param array $params Keyed values, per API documentation
-   * @return Emfl_Response
+   * @return false|Emfl_Response
    * @see https://apidocs.emailer.emfluence.com/v1/endpoints/emailReports/views
    */
   function emailreports_views( $params = array() ) {
@@ -788,7 +812,7 @@ class Emfl_Platform_API {
    * list of Emfl_EmailReport_Recipient recipients.
    *
    * @param array $params Keyed values, per API documentation
-   * @return Emfl_Response
+   * @return false|Emfl_Response
    * @see https://apidocs.emailer.emfluence.com/v1/endpoints/emailReports/clicks
    */
   function emailreports_clicks( $params = array() ) {
