@@ -714,6 +714,37 @@ class Emfl_Platform_API {
     return $response;
   }
 
+  /**
+   * Emails / sendTransactional
+   *
+   * The return value could be FALSE if a transmission error occurred,
+   * like being blocked by the Platform or a network issue.
+   *
+   * Otherwise even bad API calls will get an Emfl_Response object
+   * that corresponds with the Platform's response format. See here:
+   * http://apidocs.emailer.emfluence.com/#responses
+   *
+   * Don't forget to check the 'success' property before assuming that
+   * the operation occurred correctly. If an error occurred, the 'errors'
+   * property will have details.
+   *
+   * @param Emfl_Email $email The email object
+   * @param Emfl_Contact[] $contacts Recipients (will also get saved as contacts)
+   * @return false|Emfl_Response
+   * @see https://apidocs.emailer.emfluence.com/v1/endpoints/emails/sendTransactional
+   */
+  function emails_sendTransactional( $email, $contacts, $category = NULL, $ignore_suppression = FALSE ) {
+    $params = array(
+        'email' => $email,
+        'contacts' => $contacts
+    );
+    if(!empty($category)) $params['transactionalCategory'] = $category;
+    if($ignore_suppression) $params['ignoreContactSuppression'] = TRUE;
+    $response = $this->call('emails/sendTransactional', $params);
+    if(empty($response)) return FALSE; // Transmission error
+    return $response;
+  }
+
 
   ///////////////////
   // Email Reports //
