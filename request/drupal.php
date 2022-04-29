@@ -25,7 +25,10 @@ function emfl_platform_api_drupal_request($url, $params, $timeout, $access_token
   } else {
     return drupal_http_request(
         $url,
-        array( 'Content-Type' => 'application/json' ),
+        array(
+            'Content-Type'  => 'application/json',
+            'Authorization' => 'Bearer ' . $access_token
+        ),
         'POST',
         json_encode( (object) $params),
         1,
