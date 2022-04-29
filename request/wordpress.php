@@ -8,14 +8,17 @@
  * @param int $timeout in seconds
  * @return object|string
  */
-function emfl_platform_api_wordpress_request($url, $params, $endpoint, $timeout) {
+function emfl_platform_api_wordpress_request($url, $params, $endpoint, $timeout, $access_token) {
   if(!function_exists('wp_remote_post')) return FALSE;
   
   $response = wp_remote_post(
       $url,
       array(
           'timeout' => $timeout,
-          'headers' => array( 'Content-Type' => 'application/json' ),
+          'headers' => array(
+              'Content-Type'  => 'application/json',
+              'Authorization' => 'Bearer ' . $access_token
+          ),
           'body' => json_encode( (object) $params )
       )
   );

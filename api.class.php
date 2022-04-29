@@ -102,21 +102,20 @@ class Emfl_Platform_API {
 
     // make the call with the best request handler available
     $url = self::API_URL . '/' . $endpoint;
-    $params['accessToken'] = $this->access_token;
 
     if( function_exists('drupal_http_request') && defined('VERSION') ) {
       require_once 'request/drupal.php';
-      $response = emfl_platform_api_drupal_request($url, $params, $this->timeout);
+      $response = emfl_platform_api_drupal_request($url, $params, $this->timeout, $this->access_token);
     } elseif( function_exists('wp_remote_post') ) {
       require_once 'request/wordpress.php';
-      $response = emfl_platform_api_wordpress_request($url, $params, $endpoint, $this->timeout);
+      $response = emfl_platform_api_wordpress_request($url, $params, $endpoint, $this->timeout, $this->access_token);
       if(is_string($response)) {
         $this->err($response);
         return FALSE;
       }
     } elseif( function_exists('curl_init') ) {
       require_once 'request/generic.php';
-      $response = emfl_platform_api_generic_request($url, $params, $this->timeout);
+      $response = emfl_platform_api_generic_request($url, $params, $this->timeout, $this->access_token);
     } else {
       $this->err( 'No request handler could be found. Please install CURL on your server.' );
       return FALSE;

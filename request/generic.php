@@ -7,12 +7,15 @@
  * @param int $timeout
  * @return object
  */
-function emfl_platform_api_generic_request($url, $params, $timeout) {
+function emfl_platform_api_generic_request($url, $params, $timeout, $access_token) {
   if(!function_exists('curl_init')) return FALSE;
   $curl = curl_init($url);
   curl_setopt($curl, CURLOPT_HEADER, false);
   curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);
-  curl_setopt($curl, CURLOPT_HTTPHEADER, array("Content-type: application/json"));
+  curl_setopt($curl, CURLOPT_HTTPHEADER, array(
+      "Content-type: application/json",
+      "Authorization: Bearer " . $access_token
+  ));
   curl_setopt($curl, CURLOPT_CONNECTTIMEOUT, 2);
   curl_setopt($curl, CURLOPT_TIMEOUT, $timeout);
   curl_setopt($curl, CURLOPT_POST, true);
