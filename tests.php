@@ -5,7 +5,10 @@
  */
 function emfl_api_unit_tests_run_all() {
 
-  if(empty($_REQUEST['apitoken'])) {
+  $token = NULL;
+  if(file_exists('.access-token')) $token = trim(file_get_contents('.access-token'));
+  if(empty($token) && !empty($_REQUEST['apitoken'])) $token = $_REQUEST['apitoken'];
+  if(empty($token)) {
     ?>
     <form method="post">
       <input name="apitoken" placeholder="Enter a valid API token" />
@@ -15,7 +18,7 @@ function emfl_api_unit_tests_run_all() {
     die();
   }
   
-  define('EMFL_API_TOKEN', $_REQUEST['apitoken']);
+  define('EMFL_API_TOKEN', $token);
   foreach( glob( __DIR__ . "/tests/*.php") as $filename ) {
     try {
       include $filename;

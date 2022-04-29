@@ -1,0 +1,21 @@
+name: emfl-api
+config:
+  webroot: .
+proxy:
+  appserver:
+    - emfl-api.lndo.site
+services:
+  appserver:
+    config: {}
+    ssl: true
+    type: 'php:7.4'
+    via: apache
+    xdebug: false
+    webroot: .
+tooling:
+  composer:
+    service: appserver
+    cmd: composer --ansi
+  php:
+    service: appserver
+    cmd: php

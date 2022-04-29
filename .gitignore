@@ -1,7 +1,11 @@
 # Mac
 *.DS_Store
 
-# Eclipse
+# IDE
 .project
 .buildpath
 .settings
+.idea
+
+# Testing credential
+.access-token
